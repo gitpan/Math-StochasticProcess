@@ -1,15 +1,15 @@
 Math-StochasticProcess
 
-This set of modules is designed to faciliate the calculation of probabilities
-and expected values of stochastic processes. The basic module is the Math::StochasticProcess::Event,
-from which you derive classes which specify which Events follow from a given Event and by which probability.
-Critically this class has an "isResolved" virtual method. You kick off the module by
-creating a Math::StochasticProcess object. Its constructor takes as its argument a seed
-Event and a tolerance. When run, the PEA iterates until all events are resolved.
+One defines a stochastic process by inheriting from the
+Math::StochasticProcess::Event class and implementing the virtual
+functions. The process can be run until all events have become
+resolved (or else have probabilities that have dipped below a
+tolerance parameter).
 
-As an added convenience one may use the Math::StochasticProcess::Event::Tuple class which derives from the Event class.
-This represents a tuple of random variables. This defines all undefined base functions,
-apart from "iterate" which actually defines what how an Event moves to the next iteration.
+As an added convenience one may use the Math::StochasticProcess::Event::Tuple
+class which derives from the Event class. This represents a tuple of random
+variables. This defines all undefined base functions, apart from "iterate" which
+actually defines what how an Event moves to the next iteration.
 
 INSTALLATION
 

@@ -11,11 +11,11 @@ Math::StochasticProcess - Stochastic Process
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -29,20 +29,19 @@ our $VERSION = '0.01';
 
 =head1 DESCRIPTION
 
-This set of modules is designed to faciliate the calculation of probabilities
-and expected values from stochastic processes. The basic module is the Math::StochasticProcess::Event,
-from which you derive classes which specify which Events follow from a given Event
-and by which probability. This class has a "iterate" method which returns an array of new events.
-This "iterate" method is equivalent to the stochastic matrix.
-Critically this class has an "isResolved" virtual method.
-You kick off the module by creating a Math::StochasticProcess object. Its constructor takes as its argument a seed
-Event. When run, the StochasticProcess iterates until all events are resolved.
+One defines a stochastic process by inheriting from the
+L<Math::StochasticProcess::Event> class and implementing the virtual
+functions. The process can be run until all events have become
+resolved (or else have probabilities that have dipped below a
+tolerance parameter).
 
-In this way the Math::StochasticProcess and Math::StochasticProcess::Event modules are all that are required to use
-this package. The Math::StochasticProcess::Event module is intentionally left "pure virtual"
-so that you can implement your own efficient Event classes. A full working example
-is given below. However if this is not enough you can use the L<Math::StochasticProcess::Event::Tuple> boilerplate
-class which can be used either as is or as a base class.
+As an added convenience one may use the L<Math::StochasticProcess::Event::Tuple>
+class which derives from the Event class. This represents a tuple of random
+variables. This defines all undefined base functions, apart from "iterate" which
+actually defines what how an Event moves to the next iteration.
+
+For theoretical background, see wikipedia articles: L<http://en.wikipedia.org/wiki/Stochastic_matrix>
+and L<http://en.wikipedia.org/wiki/Stochastic_processes>.
 
 =head1 FUNCTIONS
 
@@ -54,8 +53,8 @@ This is a standard constructor function. The arguments are as follows:
 
 =item seed_event
 
-This mandatory argument must be an instance of the Math::StochasticProcess::Event class
-and its probability must be 1.
+This mandatory argument must be an instance of the L<Math::StochasticProcess::Event>
+class and its probability must be 1.
 
 =item tolerance
 
@@ -152,11 +151,9 @@ sub run {
 
 =head2 event
 
-This returns the result of the run.
-With no additional parameters it runs a list of signatures
-and events which can be put in a hash.
-Otherwise it takes as a single non-object parameter
-a signature and returns the corresponding event.
+This returns the result of the run. With no additional parameters it runs a list
+of signatures and events which can be put in a hash. Otherwise it takes as a
+single non-object parameter a signature and returns the corresponding event.
 
 =cut
 
@@ -170,11 +167,11 @@ sub event {
 
 =head2 expectedValue
 
-This  is another function returning the result of the run.
-With no additional parameters it runs a list of random variable
-names and their expected terminal values. This list can be put
-into a hash. Otherwise it takes as a single non-object parameter
-a random variable name and returns the corresponding expected value.
+This is another function returning the result of the run. With no additional
+parameters it runs a list of random variable names and their expected terminal
+values. This list can be put into a hash. Otherwise it takes as a single
+non-object parameter a random variable name and returns the corresponding
+expected value.
 
 =cut
 
@@ -334,7 +331,7 @@ Nicholas Bamber, C<< <theabbot at silasthemonk.org.uk> >>
 =head1 BUGS
 
 Please report any bugs or feature requests to
-C<bug-math-pea at rt.cpan.org>, or through the web interface at
+C<bug-math-stochasticprocess at rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Math-StochasticProcess>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.

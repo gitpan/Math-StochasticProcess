@@ -9,11 +9,11 @@ Math::StochasticProcess::Event - Base class for events.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,7 @@ For example see Math::StochasticProcess::Tuple.
 
 Uneventful constructor for Event class.
 The Event instance so created must have probability() == 1.
-
+The set of all possible Events constitutes the probability space.
 
 =cut
 
@@ -64,10 +64,10 @@ sub isResolved {
 
 =head2 iterate
 
-This is the key function. It must return a list of new Event objects,
-that are the possible iterands of the current event. The current
-Event object should not be modified. Obviously the probabilities must
-add up to the probability of the parent event.
+This is the key function. It must return a list of new Event objects, that are
+the possible iterands of the current event. The current Event object should not
+be modified. Obviously the probabilities must add up to the probability of the
+parent event.
 
 =cut
 
@@ -78,11 +78,11 @@ sub iterate {
 
 =head2 randomVariable
 
-This function must be overriden if you wish to use randomVariables
-as well as probabilities. If only the object argument is presented, it must return
-a hash keyed by all the random variable names in play, with their current values
-as the hash value. If given an argument it must return the current value of the
-so named random variable.
+This function must be overriden if you wish to use randomVariables as well as
+probabilities. If only the object argument is presented, it must return a hash
+keyed by all the random variable names in play, with their current values as the
+hash value. If given an argument it must return the current value of the so
+named random variable.
 
 =cut
 
@@ -93,8 +93,8 @@ sub randomVariable {
 
 =head2 signature
 
-A string that uniquely identifies the event.
-This is used to merge up events that have been arrived at by different routes.
+A string that uniquely identifies the event. This is used to merge up events
+that have been arrived at by different routes.
 
 =cut
 
@@ -106,8 +106,8 @@ sub signature {
 =head2 merge
 
 This method merges the second Event into the object. It is a requirement
-that the two Events have identical signatures. The probability of the
-combined Event should equal the sum of the two original Events.
+that the two Events have identical signatures. The probability of the combined
+Event should equal the sum of the two original Events.
 
 =cut
 
@@ -152,17 +152,29 @@ distribution?
     if (defined($ARGV[1])) {
         $logfh = FileHandle->new;
         open($logfh, ">$ARGV[1].log") or die "could not open log file";
-        $analysis = Math::StochasticProcess->new(seed_event=>$seed_event, tolerance=>0.0000000000000001, hard_sanity_level=>0.0000001,log_file_handle=>$logfh);
+        $analysis = Math::StochasticProcess->new
+                                        (
+                                            seed_event=>$seed_event,
+                                            tolerance=>0.0000000000000001,
+                                            hard_sanity_level=>0.0000001,
+                                            log_file_handle=>$logfh
+                                        );
     }
     else {
-        $analysis = Math::StochasticProcess->new(seed_event=>$seed_event, tolerance=>0.0000000000000001, hard_sanity_level=>0.0000001);
+        $analysis = Math::StochasticProcess->new
+                                        (
+                                            seed_event=>$seed_event,
+                                            tolerance=>0.0000000000000001,
+                                            hard_sanity_level=>0.0000001
+                                        );
     }
     $analysis->run();
     my %event = $analysis->event();
     my $expectedValue = $analysis->expectedValue('rounds');
     print "Goal: $goal\n";
     print "Expected number of rounds: $expectedValue\n";
-    foreach my $d (sort {(split(/\|/,$a))[0] <=> (split(/\|/,$b))[0]} keys %event) {
+    my @keys = sort {(split(/\|/,$a))[0] <=> (split(/\|/,$b))[0]} keys %event;
+    foreach my $d (@keys) {
         my $rounds = $event{$d}->randomVariable('rounds');
         my $probability = $event{$d}->probability();
         print "Rounds: $rounds; Probability: $probability\n";
@@ -225,7 +237,9 @@ distribution?
     sub debug {
         my $self = shift;
         my $status = $self->isResolved();
-        return "Status: $status Round: $self->{d6_rounds}; Value: $self->{d6_value}; Probability: $self->{d6_probability}\n";
+        return "Status: $status Round: $self->{d6_rounds}; \
+                Value: $self->{d6_value};\
+                Probability: $self->{d6_probability}\n";
     }
 
     sub randomVariable {
@@ -249,7 +263,7 @@ Nicholas Bamber, C<< <theabbot at silasthemonk.org.uk> >>
 =head1 BUGS
 
 Please report any bugs or feature requests to
-C<bug-math-pea-event at rt.cpan.org>, or through the web interface at
+C<bug-math-stochasticprocess-event at rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Math-StochasticProcess>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.

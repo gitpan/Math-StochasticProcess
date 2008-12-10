@@ -11,17 +11,17 @@ Math::StochasticProcess::RandomVariable - Part of the Math::StochasticProcess::T
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
 See L<Math::StochasticProcess::Event::Tuple>. The RandomVariable class
-represents a numerical random variable. The Tuple class represents a
-set of named RandomVariables, and also controls how RandomVariables change.
+represents a numerical random variable. The Tuple class represents a set of
+named RandomVariables, and also controls how RandomVariables change.
 
 =head1 FUNCTIONS
 
@@ -41,8 +41,8 @@ This optional coderef is run against any change of value and must always return 
 
 =item internal
 
-Internal random variables are ignored once an Event is resolved. Probably internal random variables
-need not be numerical.
+Internal random variables are ignored once an Event is resolved. Probably
+internal random variables need not be numerical.
 
 =back
 
@@ -54,20 +54,23 @@ sub new {
     (
         @_,
         {
-            # If this is too restrictive you should be deriving your own class from Event.
+            # If this is too restrictive,
+            # you should be deriving your own class from Event.
             value =>
             {
                 type=>SCALAR,
                 optional=>0
             },
-            # If specified &$options{validate_cb}(current value) must always return true.
+            # If specified &$options{validate_cb}(current value) must always
+            # return true.
             validate_cb=>
             {
                 type=>CODEREF,
                 optional=>1
             },
             # Variables can be external or internal.
-            # Internal variables only figure in the calculation so long as the event is unresolved.
+            # Internal variables only figure in the calculation so
+            # long as the event is unresolved.
             internal =>
             {
                 type=>BOOLEAN,
@@ -84,7 +87,8 @@ sub new {
 
 =head2 checkValue
 
-This function checks that the value of the RandomVariable satisfies its internal constraint.
+This function checks that the value of the RandomVariable satisfies its internal
+constraint.
 
 =cut
 
@@ -109,9 +113,10 @@ sub value {
 
 =head2 signature
 
-The signature gives an approximate value to the variable for the purposes of event merging.
-The more lumpy the variable then the bigger the approximation.
-If the variable has undefined lumpiness, then the signature is just the same as the value.
+The signature gives an approximate value to the variable for the purposes of
+event merging. The more lumpy the variable then the bigger the approximation. If
+the variable has undefined lumpiness, then the signature is just the same as the
+value.
 
 =cut
 
@@ -122,10 +127,10 @@ sub signature {
 
 =head2 merge
 
-This is a utility function for Math::StochasticProcess::Event::Tuple::merge.
-We choose this interface to allow for the possibility that derived classes
-might want to regard "similar" values as essentially indentical.
-In such a case the probabilities would be required to set the new value to a weighted average.
+This is a utility function for Math::StochasticProcess::Event::Tuple::merge. We
+choose this interface to allow for the possibility that derived classes might
+want to regard "similar" values as essentially indentical. In such a case the
+probabilities would be required to set the new value to a weighted average.
 
 =cut
 
@@ -138,11 +143,10 @@ sub merge {
 
 =head2 copy
 
-This is a utility function for Math::StochasticProcess::Event::Tuple::copy.
-It is effectively a constructor of the RandomVariable.
-It returns a copy of the RandomVariable with a change specified by the $change
-parameter. This might be a new value or callback which is applied to the old value
-to get the new value.
+This is a utility function for Math::StochasticProcess::Event::Tuple::copy. It
+is effectively a constructor of the RandomVariable. It returns a copy of the
+RandomVariable with a change specified by the $change parameter. This might be a
+new value or callback which is applied to the old value to get the new value.
 
 =cut
 
@@ -168,7 +172,8 @@ sub copy {
 
 =head2 isInternal
 
-Internal variables only figure in the calculation so long as the Event is unresolved.
+Internal variables only figure in the calculation so long as the Event is
+unresolved.
 
 =cut
 
@@ -182,9 +187,6 @@ sub isInternal {
 Nicholas Bamber, C<< <theabbot at silasthemonk.org.uk> >>
 
 =head1 BUGS
-
-I have not yet had a chance to test the 'lumpiness' feature of this module. Nor
-have I yet thought of a suitable regression test for it.
 
 Please report any bugs or feature requests to
 C<bug-math-pea-randomvariable at rt.cpan.org>, or through the web interface at

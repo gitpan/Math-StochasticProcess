@@ -10,7 +10,9 @@ WriteMakefile(
     PL_FILES            => {},
     PREREQ_PM => {
         'Test::More' => 0,
+	'Params::Validate' => 0
     },
+    LICENSE		=> 'perl',
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Math-StochasticProcess-*' },
 );

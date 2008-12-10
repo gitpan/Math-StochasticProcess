@@ -16,23 +16,17 @@ Math::StochasticProcess::Event::Tuple - Boilerplate code deriving from Math::Sto
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
-A L<Math::StochasticProcess::RandomVariable> represents a numerical random variable, a Tuple
-is a named set of such variables. See below for a worked example.
-
-Perhaps a little code snippet.
-
-    use Math::StochasticProcess::Event::Tuple;
-
-    my $foo = Math::StochasticProcess::Event::Tuple->new();
-    ...
+A L<Math::StochasticProcess::RandomVariable> represents a numerical random
+variable, a Tuple is a named set of such variables. See below for a worked
+example.
 
 =head1 EXPORT
 
@@ -95,7 +89,15 @@ sub new {
 
     # We have a special random variable to track whether an Event is resolved.
     $self->{random_variables}->{$self->RESOLVED_VAR_NAME()} =
-        Math::StochasticProcess::RandomVariable->new(value=>0,internal=>1,validate_cb=>sub {return $_[0] == 0 || $_[0] == 1;});
+        Math::StochasticProcess::RandomVariable->new
+                                    (
+                                        value=>0,
+                                        internal=>1,
+                                        validate_cb=>sub
+                                            {
+                                                return $_[0] == 0 || $_[0] == 1;
+                                            }
+                                    );
 
     return $self;
 }
@@ -114,7 +116,8 @@ sub probability {
 
 =head2 isResolved
 
-A resolved event requires no further analysis and can ignore its internal variables.
+A resolved event requires no further analysis and can ignore its internal
+variables.
 
 =cut
 
@@ -125,11 +128,12 @@ sub isResolved {
 
 =head2 iterate
 
-As per L<Math::StochasticProcess::Event> this is the key function. It must return a list of new Event objects,
-that are the possible iterands of the current event. The current
-Event object should not be modified. Obviously the probabilities must
-add up to the probability of the parent event. In this context it should use the
-copy method to generate new Events. So the code should look something like:
+As per L<Math::StochasticProcess::Event> this is the key function. It must
+return a list of new Event objects, that are the possible iterands of the
+current event. The current Event object should not be modified. Obviously the
+probabilities must add up to the probability of the parent event. In this
+context it should use the copy method to generate new Events. So the code should
+look something like:
 
     sub iterate {
         my $self = shift;
@@ -150,9 +154,9 @@ copy method to generate new Events. So the code should look something like:
         return @results;
     }
 
-It also has a particular responsibility to set the RESOLVED_VAR_NAME() random variable as appropriate.
-You can either redefine the iterate function in a derived class (as above)
-or specify it as a callback in the constructor.
+It also has a particular responsibility to set the RESOLVED_VAR_NAME() random
+variable as appropriate. You can either redefine the iterate function in a
+derived class (as above) or specify it as a callback in the constructor.
 
 =cut
 
@@ -166,12 +170,13 @@ sub iterate {
 
 =head2 copy
 
-This is effectively another constructor as it makes a modified copy
-of the object. The first argument is the conditional probability of transitioning
-from the parent event to the copy. The rest of the arguments are assumed to be
-a HASH mapping variables to their fate. If the value is a CODEREF then that is applied
-to the old value of the variable and the returned value becomes the new value of that
-random variable.
+This is effectively another constructor as it makes a modified copy of the
+object. The first argument is the conditional probability of transitioning from
+the parent event to the copy. The rest of the arguments are assumed to be a HASH
+mapping variables to their fate. If the value is a CODEREF then that is applied
+to the old value of the variable and the returned value becomes the new value of
+that random variable.
+
 =cut
 
 sub copy {
@@ -189,10 +194,12 @@ sub copy {
 
     foreach my $rv (keys %{$self->{random_variables}}) {
         if (exists $changes{$rv}) {
-            $copy->{random_variables}->{$rv} = $self->{random_variables}->{$rv}->copy($changes{$rv});
+            $copy->{random_variables}->{$rv} =
+                $self->{random_variables}->{$rv}->copy($changes{$rv});
         }
         else {
-            $copy->{random_variables}->{$rv} = $self->{random_variables}->{$rv}->copy();
+            $copy->{random_variables}->{$rv} =
+                $self->{random_variables}->{$rv}->copy();
         }
     }
 
@@ -202,10 +209,10 @@ sub copy {
 
 =head2 randomVariable
 
-This is straightforward implementation of the inherited
-function, for which see L<Math::StochasticProcess::Event>. It excludes internal
-random variables from the argumentless form, because they are internal.
-We allow them when asked for explicitly because it is useful.
+This is straightforward implementation of the inherited function, for which see
+L<Math::StochasticProcess::Event>. It excludes internal random variables from
+the argumentless form, because they are internal. We allow them when asked for
+explicitly because it is useful.
 
 =cut
 
@@ -229,9 +236,8 @@ sub randomVariable {
 
 =head2 RESOLVED_VAR_NAME
 
-This function returns the name of the special RandomVariable
-used to track when an Event is resolved. You can either export it
-or use it an object-oriented way.
+This function returns the name of the special RandomVariable used to track when
+an Event is resolved. You can either export it or use it an object-oriented way.
 
 =cut
 
@@ -241,10 +247,10 @@ sub RESOLVED_VAR_NAME {
 
 =head2 signature
 
-A string that uniquely identifies the event.
-This is used to merge up equivalent events that have been arrived at by different routes.
-In this implementation, internal random variables do not figure in the signature
-if the Event is resolved.
+A string that uniquely identifies the event. This is used to merge up equivalent
+events that have been arrived at by different routes. In this implementation,
+internal random variables do not figure in the signature if the Event is
+resolved.
 
 =cut
 
@@ -265,9 +271,9 @@ sub signature {
 
 =head2 merge
 
-This method merges the second Event into the object. It is a requirement
-that the two Events have identical signatures. The probability of the
-combined Event should equal the sum of the two original Events.
+This method merges the second Event into the object. It is a requirement that
+the two Events have identical signatures. The probability of the combined Event
+should equal the sum of the two original Events.
 
 =cut
 
@@ -305,7 +311,8 @@ sub debug {
 
 =head1 EXAMPLE
 
-This is the same example as in L<Math::StochasticProcess::Event> but redone using the Tuple class.
+This is the same example as in L<Math::StochasticProcess::Event> but redone
+using the Tuple class.
 
     #!/usr/bin/perl -w
     use strict;
@@ -323,8 +330,16 @@ This is the same example as in L<Math::StochasticProcess::Event> but redone usin
     (
         random_variables=>
         {
-            value=>Math::StochasticProcess::RandomVariable->new(value=>0,internal=>1),
-            rounds=>Math::StochasticProcess::RandomVariable->new(value=>0,internal=>0)
+            value=>Math::StochasticProcess::RandomVariable->new
+                                                        (
+                                                            value=>0,
+                                                            internal=>1
+                                                        ),
+            rounds=>Math::StochasticProcess::RandomVariable->new
+                                                        (
+                                                            value=>0,
+                                                            internal=>0
+                                                        )
         },
         iterate_cb=>sub
         {
@@ -335,10 +350,14 @@ This is the same example as in L<Math::StochasticProcess::Event> but redone usin
             my $t = $value +7 - $goal;
             my $l = $t < 0 ? 6 : 6-$t;
             if ($t > 0) {
-                push @results, $self->copy($t/6, RESOLVED_VAR_NAME()=>1, rounds=>$rounds+1);
+                push @results, $self->copy( $t/6,
+                                            RESOLVED_VAR_NAME()=>1,
+                                            rounds=>$rounds+1);
             }
             for(my $i = 1; $i <= $l; $i++) {
-                push @results, $self->copy(1/6, rounds=>$rounds+1, value=>$value+$i);
+                push @results, $self->copy( 1/6,
+                                            rounds=>$rounds+1,
+                                            value=>$value+$i);
             }
             return @results;
         }
@@ -350,17 +369,27 @@ This is the same example as in L<Math::StochasticProcess::Event> but redone usin
     if (defined($ARGV[1])) {
         $logfh = FileHandle->new;
         open($logfh, ">$ARGV[1]") or die "could not open log file";
-        $analysis = Math::StochasticProcess->new(seed_event=>$seed_event, tolerance=>0.0000000000000001, hard_sanity_level=>0.0000001,log_file_handle=>$logfh);
+        $analysis = Math::StochasticProcess->new(
+                                seed_event=>$seed_event,
+                                tolerance=>0.0000000000000001,
+                                hard_sanity_level=>0.0000001,
+                                log_file_handle=>$logfh
+                            );
     }
     else {
-        $analysis = Math::StochasticProcess->new(seed_event=>$seed_event, tolerance=>0.0000000000000001, hard_sanity_level=>0.0000001);
+        $analysis = Math::StochasticProcess->new(
+                                seed_event=>$seed_event,
+                                tolerance=>0.0000000000000001,
+                                hard_sanity_level=>0.0000001
+                            );
     }
     $analysis->run();
     my %event = $analysis->event();
     my $expectedValue = $analysis->expectedValue('rounds');
     print "Goal: $goal\n";
     print "Expected number of rounds: $expectedValue\n";
-    foreach my $d (sort {(split(/\|/,$a))[0] <=> (split(/\|/,$b))[0]} keys %event) {
+    my @keys = sort {(split(/\|/,$a))[0] <=> (split(/\|/,$b))[0]} keys %event;
+    foreach my $d (@keys) {
         my $rounds = $event{$d}->randomVariable('rounds');
         my $probability = $event{$d}->probability();
         print "Rounds: $rounds; Probability: $probability\n";
@@ -375,7 +404,7 @@ Nicholas Bamber, C<< <theabbot at silasthemonk.org.uk> >>
 =head1 BUGS
 
 Please report any bugs or feature requests to
-C<bug-math-pea-event-tuple at rt.cpan.org>, or through the web interface at
+C<bug-math-stochasticprocess-event-tuple at rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Math-StochasticProcess>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
