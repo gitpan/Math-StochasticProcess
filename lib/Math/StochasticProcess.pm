@@ -11,11 +11,11 @@ Math::StochasticProcess - Stochastic Process
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -146,7 +146,7 @@ sub run {
             print {$self->{log_file_handle}} "RV: $e -> $rv{$e}\n";
         }
     }
-
+    return;
 }
 
 =head2 event
@@ -160,7 +160,7 @@ single non-object parameter a signature and returns the corresponding event.
 sub event {
     my $self = shift;
     if (scalar(@_) > 0) {
-        return $self->{terminal_events}->{shift()};
+        return $self->{terminal_events}->{shift};
     }
     return %{$self->{terminal_events}};
 }
@@ -179,7 +179,7 @@ sub expectedValue {
     my $self = shift;
     my %rv = $self->{seed_event}->randomVariable();
     if (scalar(@_) > 0) {
-        die "no such random variable: $_[0]" unless exists $rv{$_[0]};
+        croak "no such random variable: $_[0]" unless exists $rv{$_[0]};
         return $self->_calculateExpectedValue($_[0]);
     }
     foreach my $r (keys %rv) {
@@ -190,7 +190,7 @@ sub expectedValue {
 
 =head2 _calculateExpectedValue
 
-Internal function. Used by "expectedValue".
+Internal function. Used by C<expectedValue>.
 
 =cut
 
@@ -321,7 +321,7 @@ sub _merge {
     else {
         $state->{$signature} = $event;
     }
-
+    return;
 }
 
 =head1 AUTHOR

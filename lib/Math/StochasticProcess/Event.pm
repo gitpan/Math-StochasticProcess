@@ -2,6 +2,7 @@ package Math::StochasticProcess::Event;
 
 use warnings;
 use strict;
+use Carp;
 
 =head1 NAME
 
@@ -9,11 +10,11 @@ Math::StochasticProcess::Event - Base class for events.
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -47,7 +48,7 @@ Must return a number between 0 and 1 inclusive.
 
 sub probability {
     my $self = shift;
-    die "not implemented yet";
+    croak "not implemented yet";
 }
 
 =head2 isResolved
@@ -59,7 +60,7 @@ and further iterations of this event are not required.
 
 sub isResolved {
     my $self = shift;
-    die "not implemented yet";
+    croak "not implemented yet";
 }
 
 =head2 iterate
@@ -73,12 +74,12 @@ parent event.
 
 sub iterate {
     my $self = shift;
-    die "not implemented yet";
+    croak "not implemented yet";
 }
 
 =head2 randomVariable
 
-This function must be overriden if you wish to use randomVariables as well as
+This function must be overridden if you wish to use randomVariables as well as
 probabilities. If only the object argument is presented, it must return a hash
 keyed by all the random variable names in play, with their current values as the
 hash value. If given an argument it must return the current value of the so
@@ -100,7 +101,7 @@ that have been arrived at by different routes.
 
 sub signature {
     my $self = shift;
-    die "not implemented yet";
+    croak "not implemented yet";
 }
 
 =head2 merge
@@ -113,7 +114,7 @@ Event should equal the sum of the two original Events.
 
 sub merge {
     my $self = shift;
-    die "not implemented yet";
+    croak "not implemented yet";
 }
 
 =head2 debug
@@ -130,7 +131,7 @@ sub debug {
 =head1 EXAMPLE
 
 Suppose you roll a six-sided die and keep a running total of the results.
-You stop rolling when the running total reaches a pre-determined goal. What is
+You stop rolling when the running total reaches a predetermined goal. What is
 the expected number of times that you roll the die, and what is the probability
 distribution?
 
@@ -151,7 +152,7 @@ distribution?
     my $analysis = undef;
     if (defined($ARGV[1])) {
         $logfh = FileHandle->new;
-        open($logfh, ">$ARGV[1].log") or die "could not open log file";
+        open($logfh, ">$ARGV[1].log") or croak "could not open log file";
         $analysis = Math::StochasticProcess->new
                                         (
                                             seed_event=>$seed_event,

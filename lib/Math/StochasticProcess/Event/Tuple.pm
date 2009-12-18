@@ -16,11 +16,11 @@ Math::StochasticProcess::Event::Tuple - Boilerplate code deriving from Math::Sto
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -165,7 +165,7 @@ sub iterate {
     if (exists $self->{iterate_cb}) {
         return $self->{iterate_cb}($self);
     }
-    die "not implemented yet";
+    croak "not implemented yet";
 }
 
 =head2 copy
@@ -203,7 +203,7 @@ sub copy {
         }
     }
 
-    bless $copy, ref($self);
+    bless $copy, ref $self;
     return $copy;
 }
 
@@ -211,7 +211,7 @@ sub copy {
 
 This is straightforward implementation of the inherited function, for which see
 L<Math::StochasticProcess::Event>. It excludes internal random variables from
-the argumentless form, because they are internal. We allow them when asked for
+the argument-less form, because they are internal. We allow them when asked for
 explicitly because it is useful.
 
 =cut
@@ -224,7 +224,7 @@ sub randomVariable {
             my $rv = $self->{random_variables}->{$name};
             return $rv->value();
         }
-        die "$name is not a random variable";
+        croak "$name is not a random variable";
     }
     my %rv = ();
     foreach my $r (keys %{$self->{random_variables}}) {
@@ -280,11 +280,11 @@ should equal the sum of the two original Events.
 sub merge {
     my $self = shift;
     my $other = shift;
-    die "cannot merge on account of class" unless ref($self) eq ref($other);
+    croak "cannot merge on account of class" unless ref $self eq ref $other;
     if ($self->signature() ne $other->signature()) {
-        die "cannot merge on account of signature";
+        croak "cannot merge on account of signature";
     }
-    die "cannot merge on account of signature" unless $self->signature() eq $other->signature();
+    croak "cannot merge on account of signature" unless $self->signature() eq $other->signature();
     $self->{tuple_probability} += $other->{tuple_probability};
     foreach my $r (keys %{$self->{random_variables}}) {
         $self->{random_variables}->{$r}->merge(
@@ -292,6 +292,7 @@ sub merge {
                         $self->{tuple_probability},
                         $other->{tuple_probability});
     }
+    return;
 }
 
 =head2 debug
@@ -368,7 +369,7 @@ using the Tuple class.
     my $analysis = undef;
     if (defined($ARGV[1])) {
         $logfh = FileHandle->new;
-        open($logfh, ">$ARGV[1]") or die "could not open log file";
+        open($logfh, ">$ARGV[1]") or croak "could not open log file";
         $analysis = Math::StochasticProcess->new(
                                 seed_event=>$seed_event,
                                 tolerance=>0.0000000000000001,
